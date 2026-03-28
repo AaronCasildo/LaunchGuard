@@ -1,12 +1,14 @@
-# 🔐 LaunchGuard — App Locker for Windows
+<h1>
+  <img src="media/lock.png" width="21" style="vertical-align:up"/> LaunchGuard - App Locker for Windows
+</h1> 
 
 A free, open-source Windows utility that blocks any application behind a custom keyword prompt — showing a lock screen the moment the app is launched.
 
 ---
 
 ## Motivation
+Every existing app locker for Windows that I could find is either paywalled ($20–$30+), poorly maintained, or both. They're simple background utilities — there's no justification for that price. LaunchGuard exists to fill that gap: a clean, free, and open alternative that anyone can use, inspect, and contribute.
 
-Every existing app locker for Windows is either paywalled ($20–$30+), poorly maintained, or both. They're simple background utilities — there's no justification for that price tag. LaunchGuard exists to fill that gap: a clean, free, and open alternative that anyone can use, inspect, and contribute t
 ---
 
 ## How It Works
