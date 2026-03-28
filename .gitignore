@@ -1,1 +1,22 @@
 devnotes.md
+
+# Ignore build output directories
+bin/
+obj/
+
+.vscode/
+
+# Ignore user-specific files
+*.user
+*.suo
+
+# Ignore log files
+*.log
+
+# Ignore temporary files
+*.tmp
+*.temp
+*.bak
+
+# Environment-specific files
+.env
