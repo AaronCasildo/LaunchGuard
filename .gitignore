@@ -20,3 +20,6 @@ obj/
 
 # Environment-specific files
 .env
+
+# .sln files
+*.sln
