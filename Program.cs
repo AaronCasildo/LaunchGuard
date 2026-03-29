@@ -38,12 +38,21 @@ internal sealed class MainForm : Form
         };
         Controls.Add(welcomeLabel);
 
-        ListBox processListBox = new ListBox()
+        ListView processListView = new ListView()
         {
             Location = new Point(20, 60),
             Size = new Size(600, 200),
+            View = View.Details,
+            FullRowSelect = true,
+            GridLines = true,
+            Font = new Font("Segoe UI", 10, FontStyle.Regular)
         };  
-        Controls.Add(processListBox);
+        processListView.Columns.Add("Process", 200);
+        processListView.Columns.Add("Started", 160);
+        processListView.Columns.Add("PID", 80);
+
+
+        Controls.Add(processListView);
 
         //Software initialization watcher
         var query = new WqlEventQuery(
@@ -60,14 +69,16 @@ internal sealed class MainForm : Form
 
             BeginInvoke(() =>
             {
-                newEvent($"System initialized: {processName}");
+                newEvent(processName, process["ProcessId"]?.ToString() ?? "N/A");
             });
         };
 
-        void newEvent(string message)
+        void newEvent(string processName, string pid)
         {
-            processListBox.Items.Insert(0, message);
-            processListBox.SelectedIndex = 0;
+            var item = new ListViewItem(processName);
+            item.SubItems.Add(DateTime.Now.ToString());
+            item.SubItems.Add(pid);
+            processListView.Items.Add(item);
         }
 
         watcher.Start(); //duh, 5 min wondering why it didn't work hahahh
