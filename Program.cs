@@ -51,6 +51,10 @@ internal sealed class MainForm : Form
         processListView.Columns.Add("Started", 160);
         processListView.Columns.Add("PID", 80);
 
+        processListView.Columns[0].Width = 300;
+        processListView.Columns[1].Width = 160;
+        processListView.Columns[2].Width = processListView.ClientSize.Width - 460;
+
 
         Controls.Add(processListView);
 
