@@ -53,11 +53,18 @@ internal sealed class MainForm : Form
 
         processListView.Columns[0].Width = 300;
         processListView.Columns[1].Width = 160;
-        processListView.Columns[2].Width = processListView.ClientSize.Width - 460;
-
-
+        processListView.Columns[2].Width = processListView.ClientSize.Width - 480;
         Controls.Add(processListView);
 
+        Button settingsButton = new Button()
+        {
+            Text = "Settings",
+            Location = new Point(20, 280),
+            Size = new Size(100, 30)
+        };  
+        Controls.Add(settingsButton);
+        settingsButton.Click += settingsButton_Click;
+        
         //Software initialization watcher
         var query = new WqlEventQuery(
             "__InstanceCreationEvent",
@@ -87,5 +94,11 @@ internal sealed class MainForm : Form
 
         watcher.Start(); //duh, 5 min wondering why it didn't work hahahh
         
+    }
+
+    private void settingsButton_Click(object? sender, EventArgs e)
+    {
+        var settingsForm = new Settings.SettingsForm();
+        settingsForm.ShowDialog();
     }
 }
