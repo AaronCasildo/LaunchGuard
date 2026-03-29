@@ -15,8 +15,18 @@ internal sealed class SettingsForm : Form
         MaximizeBox = false;
         ShowInTaskbar = true;
         ControlBox = true;
+        FormBorderStyle = FormBorderStyle.FixedSingle;
         Icon = new Icon("media\\lock.ico");
 
+        Button SaveButton = new Button()
+        {
+            Text = "Save",
+            Location = new Point(500, 260),
+            Size = new Size(80, 30)
+        };  
+        Controls.Add(SaveButton);
+        SaveButton.Click += SaveButton_Click;
+        
         DataGridView settingsGrid = new DataGridView()
         {
             Location = new Point(20, 20),
@@ -32,5 +42,10 @@ internal sealed class SettingsForm : Form
         settingsGrid.Columns[1].Name = "Password";
         settingsGrid.Columns[0].Width = 260;
         settingsGrid.Columns[1].Width = 255;
+    }
+    private void SaveButton_Click(object? sender, EventArgs e)
+    {
+        MessageBox.Show("Settings saved!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        //Implementation will come tmw
     }
 }
