@@ -43,10 +43,34 @@ internal sealed class SettingsForm : Form
         settingsGrid.Columns[1].Name = "Password";
         settingsGrid.Columns[0].Width = 260;
         settingsGrid.Columns[1].Width = 255;
+
+        foreach (var entry in LaunchGuard.AppConfig.LockedProcesses)
+        {
+            settingsGrid.Rows.Add(entry.Key, entry.Value);
+        }
     }
     private void SaveButton_Click(object? sender, EventArgs e)
     {
-        MessageBox.Show("Settings saved!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        //Implementation will come tmw
+        //Tmw is today!
+        LaunchGuard.AppConfig.LockedProcesses.Clear();
+        foreach (DataGridViewRow row in settingsGrid.Rows)
+        {
+            if (row.IsNewRow) continue; // Skip the new row placeholder
+            
+            string? process = row.Cells[0].Value?.ToString()?.Trim();
+            string? password = row.Cells[1].Value?.ToString()?.Trim();
+
+            if (!string.IsNullOrEmpty(process) && !string.IsNullOrEmpty(password))
+            {
+                LaunchGuard.AppConfig.LockedProcesses[process] = password;
+            }
+
+            MessageBox.Show(
+                "Settings saved successfully.",
+                "Success",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information
+            );
+        }
     }
 }
