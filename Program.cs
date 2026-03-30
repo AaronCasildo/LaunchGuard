@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using System.Security.Permissions;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Forms;
 using System.Management;
-using System.Drawing.Text;
 
 namespace LaunchGuard;
 
@@ -223,6 +223,19 @@ internal sealed class MainForm : Form
 
     private void settingsButton_Click(object? sender, EventArgs e)
     {
+        bool authenticated = WindowsCredentialHelper.PromptAndValidate(this.Handle);
+
+        if (!authenticated)
+        {
+            MessageBox.Show(
+                "Invalid credentials. Access denied.",
+                "Authentication Failed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+            return;
+        }
+
         var settingsForm = new Settings.SettingsForm();
         settingsForm.ShowDialog();
     }
