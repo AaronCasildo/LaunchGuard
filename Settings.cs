@@ -71,6 +71,16 @@ internal sealed class SettingsForm : Form
 
             if (!string.IsNullOrEmpty(process) && !string.IsNullOrEmpty(password))
             {
+                if (!process.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show(
+                        $"Process name '{process}' is invalid. It must end with '.exe'.",
+                        "Invalid Input",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    continue;
+                }
                 LaunchGuard.AppConfig.LockedProcesses[process] = password;
             }
         }
