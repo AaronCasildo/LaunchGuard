@@ -64,13 +64,12 @@ internal sealed class SettingsForm : Form
             {
                 LaunchGuard.AppConfig.LockedProcesses[process] = password;
             }
-
-            MessageBox.Show(
-                "Settings saved successfully.",
-                "Success",
-                MessageBoxButtons.OK,
-                MessageBoxIcon.Information
-            );
         }
+        MessageBox.Show(
+            "Settings saved successfully.",
+            "Success",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information
+        );
     }
 }
