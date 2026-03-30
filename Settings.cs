@@ -27,6 +27,15 @@ internal sealed class SettingsForm : Form
         };  
         Controls.Add(SaveButton);
         SaveButton.Click += SaveButton_Click;
+
+        Button EraseAll = new Button()
+        {
+            Text = "Erase All Configurations",
+            Location = new Point(310, 260),
+            Size = new Size(170, 30),
+        };  
+        Controls.Add(EraseAll);
+        EraseAll.Click += EraseAll_Click;
         
         settingsGrid = new DataGridView()
         {
@@ -71,5 +80,9 @@ internal sealed class SettingsForm : Form
             MessageBoxButtons.OK,
             MessageBoxIcon.Information
         );
+    }
+    private void EraseAll_Click(object? sender, EventArgs e)
+    {
+        settingsGrid.Rows.Clear();
     }
 }
