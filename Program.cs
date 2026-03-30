@@ -215,6 +215,29 @@ internal sealed class MainForm : Form
             item.SubItems.Add(DateTime.Now.ToString());
             item.SubItems.Add(pid);
             processListView.Items.Add(item);
+
+            if (AppConfig.LockedProcesses.TryGetValue(processName, out string? requiredPassword))
+            {
+                try
+                {
+                    int processId = int.Parse(pid);
+                    var process = System.Diagnostics.Process.GetProcessById(processId);
+                    process.Kill(); // Kill immediately, one tap headshot
+                }
+                catch (ArgumentException)
+                {
+                    // Process exist before password was set, ignore
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        $"Failed to kill process {processName} (PID: {pid}): {ex.Message}",
+                        "Error",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Error
+                    );
+                }
+            }
         }
 
         watcher.Start(); //duh, 5 min wondering why it didn't work hahahh
