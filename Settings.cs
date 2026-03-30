@@ -7,6 +7,7 @@ namespace Settings;
 
 internal sealed class SettingsForm : Form
 {
+    private DataGridView settingsGrid;
     public SettingsForm()
     {
         Text = "Settings";
@@ -27,7 +28,7 @@ internal sealed class SettingsForm : Form
         Controls.Add(SaveButton);
         SaveButton.Click += SaveButton_Click;
         
-        DataGridView settingsGrid = new DataGridView()
+        settingsGrid = new DataGridView()
         {
             Location = new Point(20, 20),
             Size = new Size(560, 180),
