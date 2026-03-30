@@ -4,6 +4,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Management;
+using Microsoft.VisualBasic.ApplicationServices;
+using System.Windows.Forms.VisualStyles;
 
 namespace LaunchGuard;
 
@@ -218,11 +220,24 @@ internal sealed class MainForm : Form
 
             if (AppConfig.LockedProcesses.TryGetValue(processName, out string? requiredPassword))
             {
+                //Note: Kill() will fail if the process has admin privileges, add admin exec (WIP)
                 try
                 {
                     int processId = int.Parse(pid);
                     var process = System.Diagnostics.Process.GetProcessById(processId);
+                    string execPath = process.MainModule?.FileName ?? string.Empty;
                     process.Kill(); // Kill immediately, one tap headshot
+                    
+                    BeginInvoke(() =>
+                    {
+                        if(uservalidation(processName, requiredPassword))
+                        {
+                            if (!string.IsNullOrEmpty(execPath))
+                            {
+                                System.Diagnostics.Process.Start(execPath);
+                            }
+                        }
+                    });
                 }
                 catch (ArgumentException)
                 {
@@ -236,6 +251,31 @@ internal sealed class MainForm : Form
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Error
                     );
+                }
+            }
+
+            bool uservalidation(string processName, string requiredPassword)
+            {
+                string input = Microsoft.VisualBasic.Interaction.InputBox(
+                    $"Enter password to allow {processName} to run:",
+                    "Authentication Required",
+                    "",
+                    -1, -1
+                );
+
+                if (input == requiredPassword)
+                {
+                    return true;
+                }
+                else
+                {
+                    MessageBox.Show(
+                        $"Incorrect password. {processName} will remain blocked.",
+                        "Access Denied",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning
+                    );
+                    return false;
                 }
             }
         }
