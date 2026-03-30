@@ -146,6 +146,7 @@ internal static class WindowsCredentialHelper
 
 internal sealed class MainForm : Form
 {
+    private readonly HashSet<string> approvedAccesses = new();
     public MainForm()
     {
         // Form properties
@@ -213,6 +214,7 @@ internal sealed class MainForm : Form
 
         void newEvent(string processName, string pid)
         {
+            if (approvedAccesses.Remove(processName)) return;
             var item = new ListViewItem(processName);
             item.SubItems.Add(DateTime.Now.ToString());
             item.SubItems.Add(pid);
@@ -234,6 +236,7 @@ internal sealed class MainForm : Form
                         {
                             if (!string.IsNullOrEmpty(execPath))
                             {
+                                approvedAccesses.Add(processName);
                                 System.Diagnostics.Process.Start(execPath);
                             }
                         }
