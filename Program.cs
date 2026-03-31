@@ -293,22 +293,15 @@ internal sealed class MainForm : Form
                     );
                 }
             }
-
-            bool uservalidation(string processName, string requiredPassword)
+    private static bool ValidatePassword(string processName, string requiredPassword)
             {
                 string input = Microsoft.VisualBasic.Interaction.InputBox(
                     $"Enter password to allow {processName} to run:",
-                    "Authentication Required",
-                    "",
-                    -1, -1
+            "Authentication Required"
                 );
 
-                if (input == requiredPassword)
-                {
-                    return true;
-                }
-                else
-                {
+        if (input == requiredPassword) return true;
+
                     MessageBox.Show(
                         $"Incorrect password. {processName} will remain blocked.",
                         "Access Denied",
