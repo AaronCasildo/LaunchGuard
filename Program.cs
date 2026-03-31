@@ -216,13 +216,9 @@ internal sealed class MainForm : Form
             GridLines = true,
             Font = new Font("Segoe UI", 10, FontStyle.Regular)
         };  
-        processListView.Columns.Add("Process", 200);
+        processListView.Columns.Add("Process", 300);
         processListView.Columns.Add("Started", 160);
-        processListView.Columns.Add("PID", 80);
-
-        processListView.Columns[0].Width = 300;
-        processListView.Columns[1].Width = 160;
-        processListView.Columns[2].Width = processListView.ClientSize.Width - 480;
+        processListView.Columns.Add("PID", processListView.ClientSize.Width - 480);
         Controls.Add(processListView);
 
         Button settingsButton = new Button()
