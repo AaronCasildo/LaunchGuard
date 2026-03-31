@@ -294,22 +294,22 @@ internal sealed class MainForm : Form
                 }
             }
     private static bool ValidatePassword(string processName, string requiredPassword)
-            {
-                string input = Microsoft.VisualBasic.Interaction.InputBox(
-                    $"Enter password to allow {processName} to run:",
+    {
+        string input = Microsoft.VisualBasic.Interaction.InputBox(
+            $"Enter password to allow {processName} to run:",
             "Authentication Required"
-                );
+        );
 
         if (input == requiredPassword) return true;
 
-                    MessageBox.Show(
-                        $"Incorrect password. {processName} will remain blocked.",
-                        "Access Denied",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
-                    return false;
-                }
+        MessageBox.Show(
+            $"Incorrect password. {processName} will remain blocked.",
+            "Access Denied",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Warning
+        );
+        return false;
+    }
 
     internal static class AppLauncher
     {
