@@ -144,6 +144,47 @@ internal static class WindowsCredentialHelper
     }
 }
 
+internal static class ProcessTreeKiller
+{
+    public static string KillTree(int rootPid)
+    {
+        string execPath = string.Empty;
+        try
+        {
+            var root = Process.GetProcessById(rootPid);
+            execPath = root.MainModule?.FileName ?? string.Empty;
+        }
+        catch { }
+
+        var children = new Dictionary<int, List<int>>();
+        using var searcher = new ManagementObjectSearcher(
+            "SELECT ProcessId, ParentProcessId FROM Win32_Process");
+
+        foreach (ManagementObject obj in searcher.Get())
+        {
+            int pid = Convert.ToInt32(obj["ProcessId"]);
+            int parent = Convert.ToInt32(obj["ParentProcessId"]);
+
+            if (!children.ContainsKey(parent))
+                children[parent] = new List<int>();
+            children[parent].Add(pid);
+        }
+
+        KillSubtree(rootPid, children);
+        return execPath;
+    }
+
+    private static void KillSubtree(int pid, Dictionary<int, List<int>> children)
+    {
+        if (children.TryGetValue(pid, out var kids))
+            foreach (int child in kids)
+                KillSubtree(child, children);
+
+        try { Process.GetProcessById(pid).Kill(); }
+        catch { }
+    }
+}
+
 internal sealed class MainForm : Form
 {
     private readonly HashSet<string> approvedAccesses = new();
