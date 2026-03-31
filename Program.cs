@@ -317,11 +317,46 @@ internal sealed class MainForm : Form
                     );
                     return false;
                 }
-            }
-        }
 
-        watcher.Start(); //duh, 5 min wondering why it didn't work hahahh
-        
+    internal static class AppLauncher
+    {
+        private static readonly string WindowsAppsPath =
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                "WindowsApps"
+            ).ToLowerInvariant();
+
+        private static readonly Dictionary<string, string> KnownUriSchemes = new(StringComparer.OrdinalIgnoreCase)
+        {
+            { "spotify.exe", "spotify:" },
+            { "discord.exe", "discord:" },
+            { "ms-teams.exe", "msteams:" },
+            { "whatsapp.exe", "whatsapp:" },
+            { "slack.exe", "slack:" },
+        };
+
+        public static void Launch(string execPath, string processName)
+        {
+            if (execPath.ToLowerInvariant().StartsWith(WindowsAppsPath))
+            {
+                if (KnownUriSchemes.TryGetValue(processName, out string? uri))
+                {
+                    Process.Start(new ProcessStartInfo(uri) { UseShellExecute = true });
+                    return;
+                }
+
+                Process.Start(new ProcessStartInfo("explorer.exe", $"\"{execPath}\"")
+                {
+                    UseShellExecute = true
+                });
+                return;
+            }
+
+            Process.Start(new ProcessStartInfo(execPath)
+            {
+                UseShellExecute = true
+            });
+        }
     }
 
     private void settingsButton_Click(object? sender, EventArgs e)
