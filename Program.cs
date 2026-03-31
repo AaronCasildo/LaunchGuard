@@ -4,8 +4,8 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 using System.Management;
-using Microsoft.VisualBasic.ApplicationServices;
-using System.Windows.Forms.VisualStyles;
+using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace LaunchGuard;
 
@@ -187,7 +187,11 @@ internal static class ProcessTreeKiller
 
 internal sealed class MainForm : Form
 {
-    private readonly HashSet<string> approvedAccesses = new();
+    private readonly Dictionary<string, DateTime> approvedUntil = new();
+    private readonly TimeSpan approvalWindow = TimeSpan.FromSeconds(5);
+
+    private readonly HashSet<string> interceptionsInFlight = new();
+
     public MainForm()
     {
         // Form properties
@@ -240,59 +244,91 @@ internal sealed class MainForm : Form
         var watcher = new ManagementEventWatcher(query);
         watcher.EventArrived += (sender,e) =>
         {
-            var process = (ManagementBaseObject)e.NewEvent["TargetInstance"];
-            var processName = process["Name"]?.ToString() ?? "Unknown";
+            var proc = (ManagementBaseObject)e.NewEvent["TargetInstance"];
+            string procName = proc["Name"]?.ToString() ?? "Unknown";
+            string pidStr = proc["ProcessId"]?.ToString() ?? "0";
+
+            BeginInvoke(() => HandleNewProcess(procName, pidStr, processListView));
+        };
+
+        watcher.Start();
+    }
+
+    private void HandleNewProcess(string processName, string pidStr, ListView listView)
+    {
+        processName = processName.ToLowerInvariant();
+
+        if (approvedUntil.TryGetValue(processName, out var until))
+        {
+            if (DateTime.Now < until)
+                return;
+
+            approvedUntil.Remove(processName);
+        }
+
+        var item = new ListViewItem(processName);
+        item.SubItems.Add(DateTime.Now.ToString());
+        item.SubItems.Add(pidStr);
+        listView.Items.Add(item);
+
+        if (!AppConfig.LockedProcesses.TryGetValue(processName, out string? requiredPassword))
+            return;
+
+        if (!int.TryParse(pidStr, out int pid)) return;
+
+        // Nuke the whole thing
+        if (!interceptionsInFlight.Add(processName))
+        {
+            try { Process.GetProcessById(pid).Kill(); } catch { }
+            return;
+        }
+
+        string execPath = string.Empty;
+        try
+        {
+            var proc = Process.GetProcessById(pid);
+            execPath = proc.MainModule?.FileName ?? string.Empty;
+        }
+        catch { }
+
+        string capturedExecPath = execPath;
+
+        System.Threading.Tasks.Task.Delay(800).ContinueWith(_ =>
+        {
+            KillAllByName(processName);
 
             BeginInvoke(() =>
             {
-                newEvent(processName, process["ProcessId"]?.ToString() ?? "N/A");
-            });
-        };
-
-        void newEvent(string processName, string pid)
-        {
-            if (approvedAccesses.Remove(processName)) return;
-            var item = new ListViewItem(processName);
-            item.SubItems.Add(DateTime.Now.ToString());
-            item.SubItems.Add(pid);
-            processListView.Items.Add(item);
-
-            if (AppConfig.LockedProcesses.TryGetValue(processName, out string? requiredPassword))
-            {
-                //Note: Kill() will fail if the process has admin privileges, add admin exec (WIP)
                 try
                 {
-                    int processId = int.Parse(pid);
-                    var process = System.Diagnostics.Process.GetProcessById(processId);
-                    string execPath = process.MainModule?.FileName ?? string.Empty;
-                    process.Kill(); // Kill immediately, one tap headshot
-                    
-                    BeginInvoke(() =>
+                    if (ValidatePassword(processName, requiredPassword) && !string.IsNullOrEmpty(capturedExecPath))
                     {
-                        if(uservalidation(processName, requiredPassword))
-                        {
-                            if (!string.IsNullOrEmpty(execPath))
-                            {
-                                approvedAccesses.Add(processName);
-                                System.Diagnostics.Process.Start(execPath);
-                            }
-                        }
-                    });
+                        approvedUntil[processName] = DateTime.Now.Add(approvalWindow);
+
+                        AppLauncher.Launch(capturedExecPath, processName);
+                    }
                 }
-                catch (ArgumentException)
+                finally
                 {
-                    // Process exist before password was set, ignore
+                    interceptionsInFlight.Remove(processName);
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(
-                        $"Failed to kill process {processName} (PID: {pid}): {ex.Message}",
-                        "Error",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Error
-                    );
-                }
-            }
+            });
+        });
+    }
+
+    private static void KillAllByName(string processName)
+    {
+        string name = processName.EndsWith(".exe", StringComparison.OrdinalIgnoreCase)
+            ? processName[..^4]
+            : processName;
+
+        foreach (var proc in Process.GetProcessesByName(name))
+        {
+            try { ProcessTreeKiller.KillTree(proc.Id); }
+            catch { }
+        }
+    }
+
     private static bool ValidatePassword(string processName, string requiredPassword)
     {
         string input = Microsoft.VisualBasic.Interaction.InputBox(
