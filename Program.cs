@@ -197,6 +197,8 @@ internal sealed class MainForm : Form
 
     public MainForm()
     {
+        defensesActive = AppConfig.LoadDefensesActiveState(defaultValue: true);
+
         // Form properties
         Text = "LaunchGuard";
         StartPosition = FormStartPosition.CenterScreen;
@@ -453,6 +455,7 @@ internal sealed class MainForm : Form
                 MessageBoxIcon.Information
             );
             activateDefensesButton.Text = defensesActive ? "Deactivate Defenses" : "Activate Defenses";
+            AppConfig.SaveDefensesActiveState(defensesActive);
             return;
         }
         else
