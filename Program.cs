@@ -192,6 +192,8 @@ internal sealed class MainForm : Form
     private readonly TimeSpan approvalWindow = TimeSpan.FromSeconds(5);
 
     private readonly HashSet<string> interceptionsInFlight = new();
+    private readonly Button activateDefensesButton;
+    private bool defensesActive;
 
     public MainForm()
     {
@@ -235,14 +237,14 @@ internal sealed class MainForm : Form
         Controls.Add(settingsButton);
         settingsButton.Click += settingsButton_Click;
 
-        Button ActivateDefensesButton = new Button()
+        activateDefensesButton = new Button()
         {
-            Text = "Activate Defenses",
+            Text = "Deactivate Defenses",
             Location = new Point(130, 280),
             Size = new Size(120, 30)
         };  
-        Controls.Add(ActivateDefensesButton);
-        ActivateDefensesButton.Click += ActivateDefensesButton_Click;
+        Controls.Add(activateDefensesButton);
+        activateDefensesButton.Click += ActivateDefensesButton_Click;
         
         
         //Software initialization watcher
@@ -426,15 +428,17 @@ internal sealed class MainForm : Form
 
         if (authenticated)
         {
+            defensesActive = !defensesActive;
 
-            // main functionality
-            
             MessageBox.Show(
-                "LaunchGuard defenses are now active. Protected apps will require authentication to run.",
-                "Service Activated",
+                defensesActive
+                    ? "LaunchGuard defenses are now active. Protected apps will require authentication to run."
+                    : "LaunchGuard defenses are now inactive. Protected apps can run without LaunchGuard authentication.",
+                defensesActive ? "Service Activated" : "Service Deactivated",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information
             );
+            activateDefensesButton.Text = defensesActive ? "Deactivate Defenses" : "Activate Defenses";
             return;
         }
         else
