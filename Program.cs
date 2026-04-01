@@ -284,7 +284,7 @@ internal sealed class MainForm : Form
         item.SubItems.Add(pidStr);
         listView.Items.Add(item);
 
-        if (!defensesActive)
+        if (!AreDefensesActive())
             return;
 
         if (!AppConfig.LockedProcesses.TryGetValue(processName, out string? requiredPassword))
@@ -315,12 +315,12 @@ internal sealed class MainForm : Form
             {
                 try
                 {
-                    if (!defensesActive)
+                    if (!AreDefensesActive())
                         return;
 
                     KillAllByName(processName);
 
-                    if (!defensesActive)
+                    if (!AreDefensesActive())
                         return;
 
                     if (ValidatePassword(processName, requiredPassword) && !string.IsNullOrEmpty(capturedExecPath))
@@ -336,6 +336,11 @@ internal sealed class MainForm : Form
                 }
             });
         });
+    }
+
+    private bool AreDefensesActive()
+    {
+        return defensesActive;
     }
 
     private static void KillAllByName(string processName)
