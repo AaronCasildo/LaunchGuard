@@ -284,6 +284,9 @@ internal sealed class MainForm : Form
         item.SubItems.Add(pidStr);
         listView.Items.Add(item);
 
+        if (!defensesActive)
+            return;
+
         if (!AppConfig.LockedProcesses.TryGetValue(processName, out string? requiredPassword))
             return;
 
