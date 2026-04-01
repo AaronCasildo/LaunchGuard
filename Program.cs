@@ -234,6 +234,16 @@ internal sealed class MainForm : Form
         };  
         Controls.Add(settingsButton);
         settingsButton.Click += settingsButton_Click;
+
+        Button ActivateDefensesButton = new Button()
+        {
+            Text = "Activate Defenses",
+            Location = new Point(130, 280),
+            Size = new Size(120, 30)
+        };  
+        Controls.Add(ActivateDefensesButton);
+        ActivateDefensesButton.Click += ActivateDefensesButton_Click;
+        
         
         //Software initialization watcher
         var query = new WqlEventQuery(
@@ -408,5 +418,10 @@ internal sealed class MainForm : Form
 
         var settingsForm = new Settings.SettingsForm();
         settingsForm.ShowDialog();
+    }
+
+    private void ActivateDefensesButton_Click(object? sender, EventArgs e)
+    {
+        //so far so good
     }
 }
