@@ -193,7 +193,7 @@ internal sealed class MainForm : Form
 
     private readonly HashSet<string> interceptionsInFlight = new();
     private readonly Button activateDefensesButton;
-    private bool defensesActive;
+    private bool defensesActive = true;
 
     public MainForm()
     {
@@ -239,7 +239,7 @@ internal sealed class MainForm : Form
 
         activateDefensesButton = new Button()
         {
-            Text = "Deactivate Defenses",
+            Text = defensesActive ? "Deactivate Defenses" : "Activate Defenses",
             Location = new Point(130, 280),
             Size = new Size(120, 30)
         };  
@@ -444,7 +444,9 @@ internal sealed class MainForm : Form
         else
         {
             MessageBox.Show(
-                "Authentication was not successful. LaunchGuard defenses remain inactive.",
+                defensesActive
+                    ? "Authentication was not successful. LaunchGuard defenses remain active."
+                    : "Authentication was not successful. LaunchGuard defenses remain inactive.",
                 "Activation Failed",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Error
