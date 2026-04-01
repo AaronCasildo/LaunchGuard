@@ -433,7 +433,17 @@ internal sealed class MainForm : Form
                 "LaunchGuard defenses are now active. Protected apps will require authentication to run.",
                 "Service Activated",
                 MessageBoxButtons.OK,
-                MessageBoxIcon.Exclamation
+                MessageBoxIcon.Information
+            );
+            return;
+        }
+        else
+        {
+            MessageBox.Show(
+                "Authentication was not successful. LaunchGuard defenses remain inactive.",
+                "Activation Failed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error
             );
             return;
         }
