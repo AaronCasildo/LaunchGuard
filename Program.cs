@@ -311,12 +311,18 @@ internal sealed class MainForm : Form
 
         System.Threading.Tasks.Task.Delay(800).ContinueWith(_ =>
         {
-            KillAllByName(processName);
-
             BeginInvoke(() =>
             {
                 try
                 {
+                    if (!defensesActive)
+                        return;
+
+                    KillAllByName(processName);
+
+                    if (!defensesActive)
+                        return;
+
                     if (ValidatePassword(processName, requiredPassword) && !string.IsNullOrEmpty(capturedExecPath))
                     {
                         approvedUntil[processName] = DateTime.Now.Add(approvalWindow);
