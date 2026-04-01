@@ -422,6 +422,20 @@ internal sealed class MainForm : Form
 
     private void ActivateDefensesButton_Click(object? sender, EventArgs e)
     {
-        //so far so good
+        bool authenticated = WindowsCredentialHelper.PromptAndValidate(this.Handle);
+
+        if (authenticated)
+        {
+
+            // main functionality
+            
+            MessageBox.Show(
+                "LaunchGuard defenses are now active. Protected apps will require authentication to run.",
+                "Service Activated",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Exclamation
+            );
+            return;
+        }
     }
 }
