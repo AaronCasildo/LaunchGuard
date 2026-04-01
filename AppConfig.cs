@@ -5,6 +5,11 @@ namespace LaunchGuard;
  such as the list of locked processes and their associated passwords.*/
 internal static class AppConfig
 {
+    private sealed class DefenseStateData
+    {
+        public bool DefensesActive { get; set; } = true;
+    }
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         WriteIndented = true
@@ -12,6 +17,9 @@ internal static class AppConfig
 
     private static readonly string ConfigPath =
         Path.Combine(AppContext.BaseDirectory, "launchguard.config.json");
+
+    private static readonly string DefenseStatePath =
+        Path.Combine(AppContext.BaseDirectory, "launchguard.defense-state.json");
 
     public static Dictionary<string, string> LockedProcesses { get; private set; } =
         new(StringComparer.OrdinalIgnoreCase);
@@ -55,5 +63,29 @@ internal static class AppConfig
     {
         string json = JsonSerializer.Serialize(LockedProcesses, JsonOptions);
         File.WriteAllText(ConfigPath, json);
+    }
+
+    public static bool LoadDefensesActiveState(bool defaultValue = true)
+    {
+        if (!File.Exists(DefenseStatePath))
+            return defaultValue;
+
+        try
+        {
+            string json = File.ReadAllText(DefenseStatePath);
+            var loaded = JsonSerializer.Deserialize<DefenseStateData>(json);
+            return loaded?.DefensesActive ?? defaultValue;
+        }
+        catch
+        {
+            return defaultValue;
+        }
+    }
+
+    public static void SaveDefensesActiveState(bool defensesActive)
+    {
+        var data = new DefenseStateData { DefensesActive = defensesActive };
+        string json = JsonSerializer.Serialize(data, JsonOptions);
+        File.WriteAllText(DefenseStatePath, json);
     }
 }
