@@ -50,8 +50,21 @@ internal sealed class SettingsForm : Form
 
         settingsGrid.Columns[0].Name = "Software process name";
         settingsGrid.Columns[1].Name = "Password";
-        settingsGrid.Columns[0].Width = 260;
-        settingsGrid.Columns[1].Width = 255;
+        settingsGrid.Columns[0].Width = 240;
+        settingsGrid.Columns[1].Width = 235;
+
+        var deleteCol = new DataGridViewButtonColumn()
+        {
+            Name = "Delete",
+            HeaderText = "Delete",
+            Text = "✕",
+            UseColumnTextForButtonValue = true,
+            Width = 40,
+            AutoSizeMode = DataGridViewAutoSizeColumnMode.None
+        };
+
+        settingsGrid.Columns.Add(deleteCol);
+        settingsGrid.CellClick += SettingsGrid_CellClick;
 
         foreach (var entry in LaunchGuard.AppConfig.LockedProcesses)
         {
