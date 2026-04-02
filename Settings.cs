@@ -1,4 +1,5 @@
 using System;
+using System.Configuration;
 using System.Drawing;
 using System.Security.Permissions;
 using System.Windows.Forms;
@@ -50,8 +51,8 @@ internal sealed class SettingsForm : Form
 
         settingsGrid.Columns[0].Name = "Software process name";
         settingsGrid.Columns[1].Name = "Password";
-        settingsGrid.Columns[0].Width = 240;
-        settingsGrid.Columns[1].Width = 235;
+        settingsGrid.Columns[0].Width = 220;
+        settingsGrid.Columns[1].Width = 225;
 
         var deleteCol = new DataGridViewButtonColumn()
         {
@@ -59,7 +60,7 @@ internal sealed class SettingsForm : Form
             HeaderText = "Delete",
             Text = "✕",
             UseColumnTextForButtonValue = true,
-            Width = 40,
+            Width = 55,
             AutoSizeMode = DataGridViewAutoSizeColumnMode.None
         };
 
