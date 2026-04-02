@@ -105,6 +105,20 @@ internal sealed class SettingsForm : Form
             MessageBoxIcon.Information
         );
     }
+
+    private void SettingsGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
+    {
+        if (e.ColumnIndex == settingsGrid.Columns["Delete"]!.Index && e.RowIndex >= 0)
+        {
+            if (!settingsGrid.Rows[e.RowIndex].IsNewRow)
+            {
+                settingsGrid.Rows.RemoveAt(e.RowIndex);
+                return;
+            }
+        }
+        
+    }
+
     private void EraseAll_Click(object? sender, EventArgs e)
     {
         settingsGrid.Rows.Clear();
