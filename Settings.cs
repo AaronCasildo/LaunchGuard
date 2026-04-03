@@ -74,37 +74,57 @@ internal sealed class SettingsForm : Form
     }
     private void SaveButton_Click(object? sender, EventArgs e)
     {
-        //Tmw is today!
-        LaunchGuard.AppConfig.LockedProcesses.Clear();
-        foreach (DataGridViewRow row in settingsGrid.Rows)
-        {
-            if (row.IsNewRow) continue; // Skip the new row placeholder
-            
-            string? process = row.Cells[0].Value?.ToString()?.Trim();
-            string? password = row.Cells[1].Value?.ToString()?.Trim();
+        DialogResult result = MessageBox.Show(
+            "Are you sure you want to save the current configurations? This action cannot be undone.",
+            "Confirm Save",
+            MessageBoxButtons.YesNo,
+            MessageBoxIcon.Warning
+        );
 
-            if (!string.IsNullOrEmpty(process) && !string.IsNullOrEmpty(password))
+        if (result == DialogResult.Yes){
+            //Tmw is today!
+            LaunchGuard.AppConfig.LockedProcesses.Clear();
+            foreach (DataGridViewRow row in settingsGrid.Rows)
             {
-                if (!process.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                if (row.IsNewRow) continue; // Skip the new row placeholder
+                
+                string? process = row.Cells[0].Value?.ToString()?.Trim();
+                string? password = row.Cells[1].Value?.ToString()?.Trim();
+
+                if (!string.IsNullOrEmpty(process) && !string.IsNullOrEmpty(password))
                 {
-                    MessageBox.Show(
-                        $"Process name '{process}' is invalid. It must end with '.exe'.",
-                        "Invalid Input",
-                        MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning
-                    );
-                    continue;
+                    if (!process.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
+                    {
+                        MessageBox.Show(
+                            $"Process name '{process}' is invalid. It must end with '.exe'.",
+                            "Invalid Input",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Warning
+                        );
+                        continue;
+                    }
+                    LaunchGuard.AppConfig.LockedProcesses[process] = password;
                 }
-                LaunchGuard.AppConfig.LockedProcesses[process] = password;
             }
-        }
-        LaunchGuard.AppConfig.Save();
-        MessageBox.Show(
+            LaunchGuard.AppConfig.Save();
+
+            MessageBox.Show(
             "Settings saved successfully.",
             "Success",
             MessageBoxButtons.OK,
             MessageBoxIcon.Information
+            );
+        }
+        else{
+            MessageBox.Show(
+            "Settings not saved.",
+            "Not confirmed",
+            MessageBoxButtons.OK,
+            MessageBoxIcon.Information
         );
+        }
+        
+        
     }
 
     private void SettingsGrid_CellClick(object? sender, DataGridViewCellEventArgs e)
