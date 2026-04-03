@@ -34,6 +34,9 @@ internal sealed class SettingsForm : Form
             Text = "Erase All Configurations",
             Location = new Point(310, 260),
             Size = new Size(170, 30),
+            BackColor = Color.Red,
+            ForeColor = Color.White,
+            Font = new Font(Font, FontStyle.Bold)
         };  
         Controls.Add(EraseAll);
         EraseAll.Click += EraseAll_Click;
