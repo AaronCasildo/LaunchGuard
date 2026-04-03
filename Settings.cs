@@ -20,6 +20,15 @@ internal sealed class SettingsForm : Form
         FormBorderStyle = FormBorderStyle.FixedSingle;
         Icon = new Icon("media\\lock.ico");
 
+        Label titleconfig = new Label()
+        {
+            Text = "Configuration Settings",
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            AutoSize = true,
+            Location = new Point(20, 20)
+        };
+        Controls.Add(titleconfig);
+
         Button SaveButton = new Button()
         {
             Text = "Save",
@@ -43,7 +52,7 @@ internal sealed class SettingsForm : Form
         
         settingsGrid = new DataGridView()
         {
-            Location = new Point(20, 20),
+            Location = new Point(20, 50),
             Size = new Size(560, 180),
             AllowUserToAddRows = true,
             AllowUserToDeleteRows = true,
@@ -73,7 +82,7 @@ internal sealed class SettingsForm : Form
         Label hintLabel = new Label()
         {
             Text = "Tip: Click the last empty row to add a new entry",
-            Location = new Point(20, 205),
+            Location = new Point(20, 235),
             Size = new Size(560, 20),
             ForeColor = Color.Gray,
             Font = new Font(Font.FontFamily, 10, FontStyle.Italic),
