@@ -70,6 +70,17 @@ internal sealed class SettingsForm : Form
         settingsGrid.Columns.Add(deleteCol);
         settingsGrid.CellClick += SettingsGrid_CellClick;
 
+        Label hintLabel = new Label()
+        {
+            Text = "Tip: Click the last empty row to add a new entry",
+            Location = new Point(20, 205),
+            Size = new Size(560, 20),
+            ForeColor = Color.Gray,
+            Font = new Font(Font.FontFamily, 10, FontStyle.Italic),
+            AutoSize = false
+        };
+        Controls.Add(hintLabel);
+
         foreach (var entry in LaunchGuard.AppConfig.LockedProcesses)
         {
             settingsGrid.Rows.Add(entry.Key, entry.Value);
