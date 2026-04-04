@@ -241,12 +241,15 @@ internal sealed class MainForm : Form
 
         activateDefensesButton = new Button()
         {
-            Text = defensesActive ? "Deactivate Defenses" : "Activate Defenses",
             Location = new Point(130, 280),
-            Size = new Size(120, 30)
+            Size = new Size(120, 30),
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            FlatStyle = FlatStyle.Flat,
         };  
+        activateDefensesButton.FlatAppearance.BorderSize = 1;
         Controls.Add(activateDefensesButton);
         activateDefensesButton.Click += ActivateDefensesButton_Click;
+        UpdateGuardButtonAppearance();
         
         
         //Software initialization watcher
@@ -454,7 +457,7 @@ internal sealed class MainForm : Form
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information
             );
-            activateDefensesButton.Text = defensesActive ? "Deactivate Defenses" : "Activate Defenses";
+            UpdateGuardButtonAppearance();
             AppConfig.SaveDefensesActiveState(defensesActive);
             return;
         }
@@ -469,6 +472,19 @@ internal sealed class MainForm : Form
                 MessageBoxIcon.Error
             );
             return;
+        }
+    }
+    private void UpdateGuardButtonAppearance()
+    {
+        if (defensesActive)
+        {
+            activateDefensesButton.Text = "Stop Guard";
+            activateDefensesButton.FlatAppearance.BorderColor = Color.FromArgb(198, 80, 80);
+        }
+        else
+        {
+            activateDefensesButton.Text = "Start Guard";
+            activateDefensesButton.FlatAppearance.BorderColor = Color.FromArgb(80, 160, 80);
         }
     }
 }
