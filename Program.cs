@@ -193,6 +193,10 @@ internal sealed class MainForm : Form
 
     private readonly HashSet<string> interceptionsInFlight = new();
     private readonly Button activateDefensesButton;
+    private readonly PictureBox protectionStatusIcon;
+    private readonly Label protectionStatusLabel;
+    private readonly Image? protectedShieldImage;
+    private readonly Image? unprotectedShieldImage;
     private bool defensesActive = true;
 
     public MainForm()
@@ -212,9 +216,30 @@ internal sealed class MainForm : Form
             Text = "Welcome to LaunchGuard!",
             Font = new Font("Segoe UI", 10, FontStyle.Bold),
             AutoSize = true,
-            Location = new Point(20, 20)
+            Location = new Point(16, 20)
         };
         Controls.Add(welcomeLabel);
+
+        protectedShieldImage = TryLoadImage("media\\green_shiled.png");
+        unprotectedShieldImage = TryLoadImage("media\\red_shield.png");
+
+        protectionStatusIcon = new PictureBox()
+        {
+            Location = new Point(580, 14),
+            Size = new Size(40, 40),
+            SizeMode = PictureBoxSizeMode.Zoom,
+            BackColor = Color.Transparent
+        };
+        Controls.Add(protectionStatusIcon);
+
+        protectionStatusLabel = new Label()
+        {
+            Location = new Point(480, 24),
+            Size = new Size(96, 20),
+            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+            TextAlign = ContentAlignment.MiddleRight
+        };
+        Controls.Add(protectionStatusLabel);
 
         ListView processListView = new ListView()
         {
@@ -480,11 +505,25 @@ internal sealed class MainForm : Form
         {
             activateDefensesButton.Text = "Stop Guard";
             activateDefensesButton.FlatAppearance.BorderColor = Color.FromArgb(198, 80, 80);
+            protectionStatusIcon.Image = protectedShieldImage;
+            protectionStatusLabel.Text = "Protected";
+            protectionStatusLabel.ForeColor = Color.FromArgb(53, 123, 65);
         }
         else
         {
             activateDefensesButton.Text = "Start Guard";
             activateDefensesButton.FlatAppearance.BorderColor = Color.FromArgb(80, 160, 80);
+            protectionStatusIcon.Image = unprotectedShieldImage;
+            protectionStatusLabel.Text = "Unprotected";
+            protectionStatusLabel.ForeColor = Color.FromArgb(178, 63, 63);
         }
+    }
+
+    private static Image? TryLoadImage(string relativePath)
+    {
+        if (!File.Exists(relativePath))
+            return null;
+
+        return Image.FromFile(relativePath);
     }
 }
