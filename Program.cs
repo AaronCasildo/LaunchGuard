@@ -207,6 +207,8 @@ internal sealed class MainForm : Form
         // Form properties
         Text = "LaunchGuard";
         StartPosition = FormStartPosition.CenterScreen;
+        AutoScaleMode = AutoScaleMode.Dpi;
+        AutoScaleDimensions = new SizeF(96, 96);
         ClientSize = new Size(640, 360);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
