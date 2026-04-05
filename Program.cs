@@ -199,6 +199,9 @@ internal sealed class MainForm : Form
     private readonly Image? protectedShieldImage;
     private readonly Image? unprotectedShieldImage;
     private bool defensesActive = true;
+    private readonly List<ListViewItem> allProcessItems = new();
+    private ListView processListView = null!;
+    private TextBox filterBox = null!;
 
     public MainForm()
     {
@@ -244,9 +247,31 @@ internal sealed class MainForm : Form
         };
         Controls.Add(protectionStatusLabel);
 
-        ListView processListView = new ListView()
+        filterBox = new TextBox()
         {
-            Location = new Point(20, 60),
+            Location = new Point(20, 50),
+            Size = new Size(200, 22),
+            PlaceholderText = "Filter processes..."
+        };
+        filterBox.TextChanged += (s, e) =>
+        {
+            string term = filterBox.Text.Trim();
+            processListView.BeginUpdate();
+            processListView.Items.Clear();
+            foreach (var it in allProcessItems)
+                if (string.IsNullOrEmpty(term) || it.Text.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    processListView.Items.Add(it);
+            processListView.EndUpdate();
+        };
+        filterBox.KeyDown += (s, e) =>
+        {
+            if (e.KeyCode == Keys.Escape) { filterBox.Clear(); e.SuppressKeyPress = true; }
+        };
+        Controls.Add(filterBox);
+
+        processListView = new ListView()
+        {
+            Location = new Point(20, 80),
             Size = new Size(600, 200),
             View = View.Details,
             FullRowSelect = true,
@@ -258,10 +283,13 @@ internal sealed class MainForm : Form
         processListView.Columns.Add("PID", processListView.ClientSize.Width - 480);
         Controls.Add(processListView);
 
+        // Keep the filter box unfocused on startup so its placeholder text is visible.
+        Shown += (_, _) => processListView.Focus();
+
         Button settingsButton = new Button()
         {
             Text = "Settings",
-            Location = new Point(20, 280),
+            Location = new Point(20, 310),
             Size = new Size(100, 30)
         };  
         Controls.Add(settingsButton);
@@ -269,7 +297,7 @@ internal sealed class MainForm : Form
 
         activateDefensesButton = new Button()
         {
-            Location = new Point(130, 280),
+            Location = new Point(130, 310),
             Size = new Size(120, 30),
             Font = new Font("Segoe UI", 10, FontStyle.Bold),
             FlatStyle = FlatStyle.Flat,
@@ -315,7 +343,11 @@ internal sealed class MainForm : Form
         var item = new ListViewItem(processName);
         item.SubItems.Add(DateTime.Now.ToString());
         item.SubItems.Add(pidStr);
-        listView.Items.Add(item);
+
+        allProcessItems.Add(item);
+        string term = filterBox.Text.Trim();
+        if (string.IsNullOrEmpty(term) || processName.Contains(term, StringComparison.OrdinalIgnoreCase))
+            listView.Items.Add(item);
 
         if (!AreDefensesActive())
             return;
