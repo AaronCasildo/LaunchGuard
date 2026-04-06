@@ -196,6 +196,7 @@ internal sealed class MainForm : Form
     private readonly Button activateDefensesButton;
     private readonly PictureBox protectionStatusIcon;
     private readonly PictureBox aboutImagecontainer;
+    private readonly Label aboutLabel;
     private readonly Label protectionStatusLabel;
     private readonly Image? protectedShieldImage;
     private readonly Image? unprotectedShieldImage;
@@ -240,13 +241,15 @@ internal sealed class MainForm : Form
         };
         Controls.Add(protectionStatusIcon);
 
-        Label aboutLabel = new Label()
+        aboutLabel = new Label()
         {
             Location = new Point(480, 310),
             Size = new Size(96, 20),
             Text = "About",
             Font = new Font("Segoe UI", 9, FontStyle.Bold),
-            TextAlign = ContentAlignment.MiddleRight
+            TextAlign = ContentAlignment.MiddleRight,
+            Cursor = Cursors.Hand,
+            ForeColor = Color.FromArgb(0, 102, 204)
         };
         Controls.Add(aboutLabel);
 
@@ -258,10 +261,13 @@ internal sealed class MainForm : Form
             Size = new Size(30, 30),
             Image = aboutImage,
             SizeMode = PictureBoxSizeMode.Zoom,
-            BackColor = Color.Transparent
+            BackColor = Color.Transparent,
+            Cursor = Cursors.Hand
         };
         Controls.Add(aboutImagecontainer);
 
+        aboutLabel.Click += AboutControl_Click;
+        aboutImagecontainer.Click += AboutControl_Click;
 
         protectionStatusLabel = new Label()
         {
@@ -351,6 +357,11 @@ internal sealed class MainForm : Form
         };
 
         watcher.Start();
+    }
+
+    private void AboutControl_Click(object? sender, EventArgs e)
+    {
+        //Developer sanity check - remove when not needed
     }
 
     private void HandleNewProcess(string processName, string pidStr, ListView listView)
