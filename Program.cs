@@ -361,7 +361,8 @@ internal sealed class MainForm : Form
 
     private void AboutControl_Click(object? sender, EventArgs e)
     {
-        //Developer sanity check - remove when not needed
+        var AboutForm = new About.AboutForm();
+        AboutForm.ShowDialog();
     }
 
     private void HandleNewProcess(string processName, string pidStr, ListView listView)
