@@ -61,10 +61,87 @@ internal sealed class AboutForm : Form
             Location = new Point(79, 68)
         };
 
+        // --- Divider ---
+        var divider = new Panel
+        {
+            BackColor = Color.FromArgb(200, 200, 200),
+            Size = new Size(360, 1),
+            Location = new Point(20, 104)
+        };
+
+        // --- Description ---
+        var desc = new Label
+        {
+             Text = "LaunchGuard is a Windows process-locking utility that gates application " +
+                 "access behind Windows credential authentication. It monitors running " +
+                 "processes and prevents unauthorized use of protected apps using " +
+                 "WMI-based interception and full process-tree termination.",
+            Font = new Font("Segoe UI", 9f),
+            ForeColor = Color.FromArgb(51, 51, 51),
+             AutoSize = true,
+             MaximumSize = new Size(360, 0),
+            Location = new Point(20, 114)
+        };
+
+        // --- Author row ---
+        var authorLabel = new Label
+        {
+            Text = "Author",
+            Font = new Font("Segoe UI", 9f),
+            ForeColor = Color.Gray,
+            AutoSize = true,
+            Location = new Point(20, 200)
+        };
+
+        var authorValue = new Label
+        {
+            Text = "Aaron Casildo",
+            Font = new Font("Segoe UI", 9f),
+            AutoSize = true,
+            Location = new Point(90, 200)
+        };
+
+        // --- GitHub link ---
+        var sourceLabel = new Label
+        {
+            Text = "Source",
+            Font = new Font("Segoe UI", 9f),
+            ForeColor = Color.Gray,
+            AutoSize = true,
+            Location = new Point(20, 220)
+        };
+
+        var githubLink = new LinkLabel
+        {
+            Text = "github.com/AaronCasildo/LaunchGuard",
+            Font = new Font("Segoe UI", 9f),
+            AutoSize = true,
+            Location = new Point(90, 220)
+        };
+        githubLink.LinkClicked += (_, _) =>
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = "https://github.com/AaronCasildo/LaunchGuard",
+                UseShellExecute = true
+            });
+
+        // --- OK button ---
+        var btnOk = new Button
+        {
+            Text = "OK",
+            Size = new Size(80, 26),
+            Location = new Point(300, 244),
+            DialogResult = DialogResult.OK
+        };
+        btnOk.Click += (_, _) => Close();
 
         Controls.AddRange(new Control[]
         {
             logo, appName, version, ossBadge,
+            divider, desc,
+            authorLabel, authorValue,
+            sourceLabel, githubLink,
+            btnOk
         });
     }
 }
