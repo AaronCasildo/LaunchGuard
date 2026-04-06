@@ -195,9 +195,11 @@ internal sealed class MainForm : Form
     private readonly HashSet<string> interceptionsInFlight = new();
     private readonly Button activateDefensesButton;
     private readonly PictureBox protectionStatusIcon;
+    private readonly PictureBox aboutImagecontainer;
     private readonly Label protectionStatusLabel;
     private readonly Image? protectedShieldImage;
     private readonly Image? unprotectedShieldImage;
+    private readonly Image? aboutImage;
     private bool defensesActive = true;
     private readonly List<ListViewItem> allProcessItems = new();
     private ListView processListView = null!;
@@ -237,6 +239,29 @@ internal sealed class MainForm : Form
             BackColor = Color.Transparent
         };
         Controls.Add(protectionStatusIcon);
+
+        Label aboutLabel = new Label()
+        {
+            Location = new Point(480, 310),
+            Size = new Size(96, 20),
+            Text = "About",
+            Font = new Font("Segoe UI", 9, FontStyle.Bold),
+            TextAlign = ContentAlignment.MiddleRight
+        };
+        Controls.Add(aboutLabel);
+
+        aboutImage = TryLoadImage("media\\info.png");
+
+        aboutImagecontainer = new PictureBox()
+        {
+            Location = new Point(580, 304),
+            Size = new Size(30, 30),
+            Image = aboutImage,
+            SizeMode = PictureBoxSizeMode.Zoom,
+            BackColor = Color.Transparent
+        };
+        Controls.Add(aboutImagecontainer);
+
 
         protectionStatusLabel = new Label()
         {
