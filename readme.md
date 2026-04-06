@@ -4,6 +4,8 @@
 
 A free, open-source Windows utility that blocks any application behind a custom keyword prompt — showing a lock screen the moment the app is launched.
 
+![LaunchGuard main UI screenshot](media/main.png)
+
 ---
 
 ## Motivation
@@ -28,10 +30,4 @@ No modifications to the original executables.
 
 ---
 
-## License
-
-To be determined — likely MIT for the core, with a potential Pro tier for advanced features down the line.
-
----
-
-*Built because the alternatives are overpriced and mediocre.*
+*Built to offer a simpler, more accessible alternative.*
