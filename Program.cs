@@ -225,6 +225,60 @@ internal sealed class MainForm : Form
         MaximizeBox = false;
         Icon = new Icon("media\\lock.ico");
 
+        trayMenu = new ContextMenuStrip();
+        trayShowHideMenuItem = new ToolStripMenuItem("Hide Window");
+        trayDefensesMenuItem = new ToolStripMenuItem();
+        trayIcon = new NotifyIcon
+        {
+            Text = "LaunchGuard",
+            Icon = Icon,
+            Visible = true,
+            ContextMenuStrip = trayMenu
+        };
+
+        trayShowHideMenuItem.Click += (_, _) =>
+        {
+            if (Visible)
+                HideToTray(showTip: false);
+            else
+                ShowFromTray();
+        };
+
+        trayDefensesMenuItem.Click += (_, _) => ToggleDefensesWithAuth();
+
+        var traySettingsMenuItem = new ToolStripMenuItem("Settings");
+        traySettingsMenuItem.Click += settingsButton_Click;
+
+        var trayAboutMenuItem = new ToolStripMenuItem("About");
+        trayAboutMenuItem.Click += AboutControl_Click;
+
+        var trayExitMenuItem = new ToolStripMenuItem("Exit");
+        trayExitMenuItem.Click += (_, _) =>
+        {
+            exitRequested = true;
+            Close();
+        };
+
+        trayMenu.Items.AddRange(new ToolStripItem[]
+        {
+            trayShowHideMenuItem,
+            trayDefensesMenuItem,
+            traySettingsMenuItem,
+            trayAboutMenuItem,
+            new ToolStripSeparator(),
+            trayExitMenuItem
+        });
+
+        trayIcon.DoubleClick += (_, _) => ShowFromTray();
+
+        Resize += (_, _) =>
+        {
+            if (WindowState == FormWindowState.Minimized)
+                HideToTray(showTip: true);
+        };
+
+        FormClosing += MainForm_FormClosing;
+
         Label welcomeLabel = new Label()
         {
             Text = "Welcome to LaunchGuard!",
