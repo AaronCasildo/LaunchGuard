@@ -533,6 +533,11 @@ internal sealed class MainForm : Form
     }
 
     private void ActivateDefensesButton_Click(object? sender, EventArgs e)
+{
+        ToggleDefensesWithAuth();
+    }
+
+    private void ToggleDefensesWithAuth()
     {
         bool authenticated = WindowsCredentialHelper.PromptAndValidate(this.Handle);
 
