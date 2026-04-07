@@ -690,6 +690,14 @@ internal sealed class MainForm : Form
             protectionStatusLabel.Text = "Unprotected";
             protectionStatusLabel.ForeColor = Color.FromArgb(178, 63, 63);
         }
+
+        UpdateTrayState();
+    }
+
+    private void UpdateTrayState()
+    {
+        trayDefensesMenuItem.Text = defensesActive ? "Disable Defenses" : "Enable Defenses";
+        trayIcon.Text = defensesActive ? "LaunchGuard (Protected)" : "LaunchGuard (Unprotected)";
     }
 
     private static Image? TryLoadImage(string relativePath)
