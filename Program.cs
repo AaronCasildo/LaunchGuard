@@ -405,8 +405,8 @@ internal sealed class MainForm : Form
             "TargetInstance ISA 'Win32_Process'"
         );
 
-        var watcher = new ManagementEventWatcher(query);
-        watcher.EventArrived += (sender,e) =>
+        processWatcher = new ManagementEventWatcher(query);
+        processWatcher.EventArrived += (sender,e) =>
         {
             var proc = (ManagementBaseObject)e.NewEvent["TargetInstance"];
             string procName = proc["Name"]?.ToString() ?? "Unknown";
@@ -415,7 +415,10 @@ internal sealed class MainForm : Form
             BeginInvoke(() => HandleNewProcess(procName, pidStr, processListView));
         };
 
-        watcher.Start();
+        processWatcher.Start();
+
+        UpdateTrayState();
+    }
     }
 
     private void AboutControl_Click(object? sender, EventArgs e)
