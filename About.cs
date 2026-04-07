@@ -9,7 +9,7 @@ internal sealed class AboutForm : Form
 {
     public AboutForm()
     {
-        Text = "About LaunchGuard";
+        Text = "About";
         StartPosition = FormStartPosition.CenterScreen;
         ClientSize = new Size(400, 280);
         MaximizeBox = false;
