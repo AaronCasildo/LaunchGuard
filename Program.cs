@@ -419,6 +419,44 @@ internal sealed class MainForm : Form
 
         UpdateTrayState();
     }
+
+    private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+    {
+        if (!exitRequested && e.CloseReason == CloseReason.UserClosing)
+        {
+            e.Cancel = true;
+            HideToTray(showTip: true);
+            return;
+        }
+
+        try { processWatcher.Stop(); } catch { }
+        processWatcher.Dispose();
+        trayIcon.Visible = false;
+        trayIcon.Dispose();
+        trayMenu.Dispose();
+    }
+
+    private void HideToTray(bool showTip)
+    {
+        Hide();
+        ShowInTaskbar = false;
+        trayShowHideMenuItem.Text = "Show Window";
+
+        if (showTip)
+        {
+            trayIcon.BalloonTipTitle = "LaunchGuard is still running";
+            trayIcon.BalloonTipText = "Use the tray icon to reopen LaunchGuard.";
+            trayIcon.ShowBalloonTip(2000);
+        }
+    }
+
+    private void ShowFromTray()
+    {
+        Show();
+        ShowInTaskbar = true;
+        WindowState = FormWindowState.Normal;
+        Activate();
+        trayShowHideMenuItem.Text = "Hide Window";
     }
 
     private void AboutControl_Click(object? sender, EventArgs e)
