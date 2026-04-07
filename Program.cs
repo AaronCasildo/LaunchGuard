@@ -192,6 +192,12 @@ internal sealed class MainForm : Form
     private readonly HashSet<string> approvedProcesses = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly HashSet<string> interceptionsInFlight = new();
+    private readonly ManagementEventWatcher processWatcher;
+    private readonly NotifyIcon trayIcon;
+    private readonly ContextMenuStrip trayMenu;
+    private readonly ToolStripMenuItem trayShowHideMenuItem;
+    private readonly ToolStripMenuItem trayDefensesMenuItem;
+    private bool exitRequested;
     private readonly Button activateDefensesButton;
     private readonly PictureBox protectionStatusIcon;
     private readonly PictureBox aboutImagecontainer;
@@ -533,7 +539,7 @@ internal sealed class MainForm : Form
     }
 
     private void ActivateDefensesButton_Click(object? sender, EventArgs e)
-{
+    {
         ToggleDefensesWithAuth();
     }
 
