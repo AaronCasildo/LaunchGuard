@@ -189,8 +189,7 @@ internal static class ProcessTreeKiller
 
 internal sealed class MainForm : Form
 {
-    private readonly Dictionary<string, DateTime> approvedUntil = new();
-    private readonly TimeSpan approvalWindow = TimeSpan.FromSeconds(5);
+    private readonly HashSet<string> approvedProcesses = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly HashSet<string> interceptionsInFlight = new();
     private readonly Button activateDefensesButton;
@@ -369,13 +368,8 @@ internal sealed class MainForm : Form
     {
         processName = processName.ToLowerInvariant();
 
-        if (approvedUntil.TryGetValue(processName, out var until))
-        {
-            if (DateTime.Now < until)
-                return;
-
-            approvedUntil.Remove(processName);
-        }
+        if (approvedProcesses.Contains(processName))
+            return;
 
         var item = new ListViewItem(processName);
         item.SubItems.Add(DateTime.Now.ToString());
@@ -427,7 +421,7 @@ internal sealed class MainForm : Form
 
                     if (ValidatePassword(processName, requiredPassword) && !string.IsNullOrEmpty(capturedExecPath))
                     {
-                        approvedUntil[processName] = DateTime.Now.Add(approvalWindow);
+                        approvedProcesses.Add(processName);
 
                         AppLauncher.Launch(capturedExecPath, processName);
                     }
@@ -545,6 +539,7 @@ internal sealed class MainForm : Form
         if (authenticated)
         {
             defensesActive = !defensesActive;
+            approvedProcesses.Clear();
 
             MessageBox.Show(
                 defensesActive
