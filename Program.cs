@@ -192,6 +192,12 @@ internal sealed class MainForm : Form
     private readonly HashSet<string> approvedProcesses = new(StringComparer.OrdinalIgnoreCase);
 
     private readonly HashSet<string> interceptionsInFlight = new();
+    private readonly ManagementEventWatcher processWatcher;
+    private readonly NotifyIcon trayIcon;
+    private readonly ContextMenuStrip trayMenu;
+    private readonly ToolStripMenuItem trayShowHideMenuItem;
+    private readonly ToolStripMenuItem trayDefensesMenuItem;
+    private bool exitRequested;
     private readonly Button activateDefensesButton;
     private readonly PictureBox protectionStatusIcon;
     private readonly PictureBox aboutImagecontainer;
@@ -218,6 +224,60 @@ internal sealed class MainForm : Form
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
         Icon = new Icon("media\\lock.ico");
+
+        trayMenu = new ContextMenuStrip();
+        trayShowHideMenuItem = new ToolStripMenuItem("Hide Window");
+        trayDefensesMenuItem = new ToolStripMenuItem();
+        trayIcon = new NotifyIcon
+        {
+            Text = "LaunchGuard",
+            Icon = Icon,
+            Visible = true,
+            ContextMenuStrip = trayMenu
+        };
+
+        trayShowHideMenuItem.Click += (_, _) =>
+        {
+            if (Visible)
+                HideToTray(showTip: false);
+            else
+                ShowFromTray();
+        };
+
+        trayDefensesMenuItem.Click += (_, _) => ToggleDefensesWithAuth();
+
+        var traySettingsMenuItem = new ToolStripMenuItem("Settings");
+        traySettingsMenuItem.Click += settingsButton_Click;
+
+        var trayAboutMenuItem = new ToolStripMenuItem("About");
+        trayAboutMenuItem.Click += AboutControl_Click;
+
+        var trayExitMenuItem = new ToolStripMenuItem("Exit");
+        trayExitMenuItem.Click += (_, _) =>
+        {
+            exitRequested = true;
+            Close();
+        };
+
+        trayMenu.Items.AddRange(new ToolStripItem[]
+        {
+            trayShowHideMenuItem,
+            trayDefensesMenuItem,
+            traySettingsMenuItem,
+            trayAboutMenuItem,
+            new ToolStripSeparator(),
+            trayExitMenuItem
+        });
+
+        trayIcon.DoubleClick += (_, _) => ShowFromTray();
+
+        Resize += (_, _) =>
+        {
+            if (WindowState == FormWindowState.Minimized)
+                HideToTray(showTip: true);
+        };
+
+        FormClosing += MainForm_FormClosing;
 
         Label welcomeLabel = new Label()
         {
@@ -345,8 +405,8 @@ internal sealed class MainForm : Form
             "TargetInstance ISA 'Win32_Process'"
         );
 
-        var watcher = new ManagementEventWatcher(query);
-        watcher.EventArrived += (sender,e) =>
+        processWatcher = new ManagementEventWatcher(query);
+        processWatcher.EventArrived += (sender,e) =>
         {
             var proc = (ManagementBaseObject)e.NewEvent["TargetInstance"];
             string procName = proc["Name"]?.ToString() ?? "Unknown";
@@ -355,7 +415,48 @@ internal sealed class MainForm : Form
             BeginInvoke(() => HandleNewProcess(procName, pidStr, processListView));
         };
 
-        watcher.Start();
+        processWatcher.Start();
+
+        UpdateTrayState();
+    }
+
+    private void MainForm_FormClosing(object? sender, FormClosingEventArgs e)
+    {
+        if (!exitRequested && e.CloseReason == CloseReason.UserClosing)
+        {
+            e.Cancel = true;
+            HideToTray(showTip: true);
+            return;
+        }
+
+        try { processWatcher.Stop(); } catch { }
+        processWatcher.Dispose();
+        trayIcon.Visible = false;
+        trayIcon.Dispose();
+        trayMenu.Dispose();
+    }
+
+    private void HideToTray(bool showTip)
+    {
+        Hide();
+        ShowInTaskbar = false;
+        trayShowHideMenuItem.Text = "Show Window";
+
+        if (showTip)
+        {
+            trayIcon.BalloonTipTitle = "LaunchGuard is still running";
+            trayIcon.BalloonTipText = "Use the tray icon to reopen LaunchGuard.";
+            trayIcon.ShowBalloonTip(2000);
+        }
+    }
+
+    private void ShowFromTray()
+    {
+        Show();
+        ShowInTaskbar = true;
+        WindowState = FormWindowState.Normal;
+        Activate();
+        trayShowHideMenuItem.Text = "Hide Window";
     }
 
     private void AboutControl_Click(object? sender, EventArgs e)
@@ -534,6 +635,11 @@ internal sealed class MainForm : Form
 
     private void ActivateDefensesButton_Click(object? sender, EventArgs e)
     {
+        ToggleDefensesWithAuth();
+    }
+
+    private void ToggleDefensesWithAuth()
+    {
         bool authenticated = WindowsCredentialHelper.PromptAndValidate(this.Handle);
 
         if (authenticated)
@@ -584,6 +690,14 @@ internal sealed class MainForm : Form
             protectionStatusLabel.Text = "Unprotected";
             protectionStatusLabel.ForeColor = Color.FromArgb(178, 63, 63);
         }
+
+        UpdateTrayState();
+    }
+
+    private void UpdateTrayState()
+    {
+        trayDefensesMenuItem.Text = defensesActive ? "Disable Defenses" : "Enable Defenses";
+        trayIcon.Text = defensesActive ? "LaunchGuard (Protected)" : "LaunchGuard (Unprotected)";
     }
 
     private static Image? TryLoadImage(string relativePath)
