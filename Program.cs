@@ -442,12 +442,14 @@ internal sealed class MainForm : Form
         ShowInTaskbar = false;
         trayShowHideMenuItem.Text = "Show Window";
 
-        if (showTip)
-        {
-            trayIcon.BalloonTipTitle = "LaunchGuard is still running";
-            trayIcon.BalloonTipText = "Use the tray icon to reopen LaunchGuard.";
-            trayIcon.ShowBalloonTip(2000);
-        }
+        // Remove this section to add friction to the hiding/tamper attempts.
+        // WIP reenable with a "Don't show this again" checkbox if user feedback indicates balloon tips are too annoying.         
+        // // if (showTip)
+        // {
+        //     trayIcon.BalloonTipTitle = "LaunchGuard is still running";
+        //     trayIcon.BalloonTipText = "Use the tray icon to reopen LaunchGuard.";
+        //     trayIcon.ShowBalloonTip(2000);
+        // }
     }
 
     private void ShowFromTray()
