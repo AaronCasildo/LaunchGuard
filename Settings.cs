@@ -90,6 +90,23 @@ internal sealed class SettingsForm : Form
         };
         Controls.Add(hintLabel);
 
+        Label startupLabel = new Label()
+        {
+            Text = "Run On Startup: ",
+            Location = new Point(20, 265),
+            ForeColor = Color.Black,
+            Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            AutoSize = true
+        };
+        Controls.Add(startupLabel);
+
+        CheckBox startupCheckBox = new CheckBox()
+        {
+            Location = new Point(startupLabel.Right, 270),
+            AutoSize = true
+        };
+        Controls.Add(startupCheckBox);
+
         foreach (var entry in LaunchGuard.AppConfig.LockedProcesses)
         {
             settingsGrid.Rows.Add(entry.Key, entry.Value);
