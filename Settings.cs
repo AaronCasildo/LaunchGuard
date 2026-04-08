@@ -96,7 +96,7 @@ internal sealed class SettingsForm : Form
             Text = "Run On Startup: ",
             Location = new Point(20, 265),
             ForeColor = Color.Black,
-            Font = new Font("Segoe UI", 10, FontStyle.Bold),
+            Font = new Font("Segoe UI", 10, FontStyle.Regular),
             AutoSize = true
         };
         Controls.Add(startupLabel);
