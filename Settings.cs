@@ -9,6 +9,7 @@ namespace Settings;
 internal sealed class SettingsForm : Form
 {
     private DataGridView settingsGrid;
+    private CheckBox startupCheckBox;
     public SettingsForm()
     {
         Text = "Settings";
@@ -100,12 +101,16 @@ internal sealed class SettingsForm : Form
         };
         Controls.Add(startupLabel);
 
-        CheckBox startupCheckBox = new CheckBox()
+        startupCheckBox = new CheckBox()
         {
             Location = new Point(startupLabel.Right, 270),
-            AutoSize = true
+            AutoSize = true,
+            Checked = StartupManager.IsStartupEnabled() // load current state
+
         };
         Controls.Add(startupCheckBox);
+        startupCheckBox.CheckedChanged += (s, e) =>
+            StartupManager.SetStartup(startupCheckBox.Checked); // instant apply
 
         foreach (var entry in LaunchGuard.AppConfig.LockedProcesses)
         {
