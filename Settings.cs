@@ -3,6 +3,7 @@ using System.Configuration;
 using System.Drawing;
 using System.Security.Permissions;
 using System.Windows.Forms;
+using LaunchGuard;
 
 namespace Settings;
 
@@ -19,7 +20,7 @@ internal sealed class SettingsForm : Form
         ShowInTaskbar = true;
         ControlBox = true;
         FormBorderStyle = FormBorderStyle.FixedSingle;
-        Icon = new Icon("media\\lock.ico");
+        Icon = ResourceHelper.LoadIcon("lock.ico");
 
         Label titleconfig = new Label()
         {
