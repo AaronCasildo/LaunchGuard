@@ -15,7 +15,7 @@ public static class StartupManager
     {
         using var key = Registry.CurrentUser.OpenSubKey(Runkey, writable: true);
         if (enable)
-            key?.SetValue(AppName, Application.ExecutablePath);
+            key?.SetValue(AppName, $"\"{Application.ExecutablePath}\"");
         else
             key?.DeleteValue(AppName, throwOnMissingValue:false);
     }
