@@ -66,6 +66,7 @@ internal sealed class SettingsForm : Form
         settingsGrid.Columns[1].Name = "Password";
         settingsGrid.Columns[0].Width = 220;
         settingsGrid.Columns[1].Width = 225;
+        settingsGrid.CellFormatting += SettingsGrid_CellFormatting;
 
         var deleteCol = new DataGridViewButtonColumn()
         {
