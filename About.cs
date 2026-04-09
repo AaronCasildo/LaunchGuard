@@ -3,27 +3,12 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
+using LaunchGuard;
 
 namespace About;
 
 internal sealed class AboutForm : Form
 {
-    private static Stream GetResourceStream(string filename)
-    {
-        var assembly = Assembly.GetExecutingAssembly();
-        return assembly.GetManifestResourceStream($"LaunchGuard.media.{filename}")
-            ?? throw new Exception($"Embedded resource not found: {filename}");
-    }
-
-    private static Image LoadEmbeddedImage(string filename)
-    {
-        return Image.FromStream(GetResourceStream(filename));
-    }
-
-    private static Icon LoadEmbeddedIcon(string filename)
-    {
-        return new Icon(GetResourceStream(filename));
-    }
 
     public AboutForm()
     {
@@ -34,7 +19,7 @@ internal sealed class AboutForm : Form
         ShowInTaskbar = false;
         ControlBox = true;
         FormBorderStyle = FormBorderStyle.FixedSingle;
-        Icon = LoadEmbeddedIcon("lock.ico");
+        Icon = ResourceHelper.LoadIcon("lock.ico");
 
         BuildUI();
     }
@@ -43,7 +28,7 @@ internal sealed class AboutForm : Form
     {
         var logo = new PictureBox
         {
-            Image = LoadEmbeddedImage("lock.ico"),
+            Image = ResourceHelper.LoadImage("lock.ico"),
             SizeMode = PictureBoxSizeMode.StretchImage,
             Size = new Size(48, 48),
             Location = new Point(20, 20)
