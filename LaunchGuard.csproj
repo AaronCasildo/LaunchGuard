@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="System.Management" Version="10.0.5" />
+    <EmbeddedResource Include="media\**\*" />
   </ItemGroup>
 
 </Project>
