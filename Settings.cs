@@ -186,6 +186,28 @@ internal sealed class SettingsForm : Form
         
     }
 
+    private void SettingsGrid_CellFormatting(object? sender, DataGridViewCellFormattingEventArgs e)
+    {
+        if (e.RowIndex < 0 || e.ColumnIndex != 1)
+        {
+            return;
+        }
+
+        if (settingsGrid.IsCurrentCellInEditMode &&
+            settingsGrid.CurrentCell?.RowIndex == e.RowIndex &&
+            settingsGrid.CurrentCell?.ColumnIndex == e.ColumnIndex)
+        {
+            return;
+        }
+
+        string? password = e.Value?.ToString();
+        if (!string.IsNullOrEmpty(password))
+        {
+            e.Value = new string('•', password.Length);
+            e.FormattingApplied = true;
+        }
+    }
+
     private void EraseAll_Click(object? sender, EventArgs e)
     {
         settingsGrid.Rows.Clear();
