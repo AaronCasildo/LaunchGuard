@@ -616,20 +616,18 @@ internal sealed class MainForm : Form
 
     private void settingsButton_Click(object? sender, EventArgs e)
     {
-        // bool authenticated = WindowsCredentialHelper.PromptAndValidate(this.Handle);
+        bool authenticated = WindowsCredentialHelper.PromptAndValidate(this.Handle);
 
-        // if (!authenticated)
-        // {
-        //     MessageBox.Show(
-        //         "Invalid credentials. Access denied.",
-        //         "Authentication Failed",
-        //         MessageBoxButtons.OK,
-        //         MessageBoxIcon.Warning
-        //     );
-        //     return;
-        // }
-        
-        //Developer sanity check - remove when not needed
+        if (!authenticated)
+        {
+            MessageBox.Show(
+                "Invalid credentials. Access denied.",
+                "Authentication Failed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning
+            );
+            return;
+        }
 
         var settingsForm = new Settings.SettingsForm();
         settingsForm.ShowDialog();
