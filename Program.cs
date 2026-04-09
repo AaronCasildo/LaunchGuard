@@ -223,7 +223,7 @@ internal sealed class MainForm : Form
         ClientSize = new Size(640, 360);
         FormBorderStyle = FormBorderStyle.FixedSingle;
         MaximizeBox = false;
-        Icon = new Icon("media\\lock.ico");
+        Icon = ResourceHelper.LoadIcon("lock.ico");
 
         trayMenu = new ContextMenuStrip();
         trayShowHideMenuItem = new ToolStripMenuItem("Hide Window");
@@ -288,8 +288,8 @@ internal sealed class MainForm : Form
         };
         Controls.Add(welcomeLabel);
 
-        protectedShieldImage = TryLoadImage("media\\green_shiled.png");
-        unprotectedShieldImage = TryLoadImage("media\\red_shield.png");
+        protectedShieldImage = TryLoadImage("green_shiled.png");
+        unprotectedShieldImage = TryLoadImage("red_shield.png");
 
         protectionStatusIcon = new PictureBox()
         {
@@ -312,7 +312,7 @@ internal sealed class MainForm : Form
         };
         Controls.Add(aboutLabel);
 
-        aboutImage = TryLoadImage("media\\info.png");
+        aboutImage = TryLoadImage("info.png");
 
         aboutImagecontainer = new PictureBox()
         {
@@ -700,11 +700,15 @@ internal sealed class MainForm : Form
         trayIcon.Text = defensesActive ? "LaunchGuard (Protected)" : "LaunchGuard (Unprotected)";
     }
 
-    private static Image? TryLoadImage(string relativePath)
+    private static Image? TryLoadImage(string resourceFileName)
     {
-        if (!File.Exists(relativePath))
+        try
+        {
+            return ResourceHelper.LoadImage(resourceFileName);
+        }
+        catch
+        {
             return null;
-
-        return Image.FromFile(relativePath);
+        }
     }
 }
