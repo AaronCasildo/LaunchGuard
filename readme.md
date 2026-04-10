@@ -2,7 +2,7 @@
   <img src="media/lock.png" width="21" style="vertical-align:up"/> LaunchGuard - App Locker for Windows
 </h1> 
 
-A free, open-source Windows utility that blocks any application behind a custom keyword prompt — showing a lock screen the moment the app is launched.
+A free, open-source Windows utility that blocks selected applications behind custom authentication.
 
 ![LaunchGuard main UI screenshot](media/main.png)
 
@@ -13,20 +13,40 @@ Every existing app locker for Windows that I could find is either paywalled ($20
 
 ---
 
-## How It Works
+## Development Direction
 
-LaunchGuard runs as a background Windows Service and monitors for the launch of any app you've marked as protected. The moment a target process is detected, it is immediately suspended and a keyword prompt overlays the screen. The app only continues if the correct keyword is entered.        
-No modifications to the original executables.
+LaunchGuard is moving to a **split architecture**:
+
+- **Windows Service (core enforcement):** always-on process monitoring, policy enforcement, and tamper resistance.
+- **WinForms UI (control panel):** user-facing settings, protected app management, and status/diagnostics.
+
+This direction is intended to make LaunchGuard harder to disable while keeping configuration simple for everyday use.
+
+## How It Works (Target Architecture)
+
+1. The service monitors process creation events for protected apps.
+2. When a protected app is launched, the service enforces the configured policy.
+3. The WinForms UI communicates with the service to update rules and display current protection state.
+4. Authentication is required for sensitive actions such as disabling protection or modifying protected app rules.
+
+No modifications are made to the original executables.
 
 ---
 
 ## Tech Stack
 
 - **Language:** C#
-- **UI:** WPF (.NET)
-- **Process monitoring:** WMI event subscriptions
-- **Config:** Local JSON
-- **Distribution:** Windows Service + installer
+- **UI:** WinForms (.NET)
+- **Core runtime:** Windows Service
+- **Process monitoring:** WMI event subscriptions (current), with room for service-level hardening
+- **Config:** Local JSON (evolving toward service-managed configuration)
+- **Distribution:** Service + desktop UI + installer
+
+---
+
+## Current Status
+
+This repository is actively transitioning toward the service + WinForms model. During this phase, some implementation details may differ from the final architecture while the service boundary and tamper-resistance model are being completed.
 
 ---
 
